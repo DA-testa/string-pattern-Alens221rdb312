@@ -4,7 +4,7 @@ Q = 256
 def read_input():
     choice = input().strip()
     if choice == 'F':
-        with open('test_input.txt', 'r') as f:
+        with open('tests/06', 'r') as f:
             pattern = f.readline().strip()
             text = f.readline().strip()
     else:
@@ -16,9 +16,16 @@ def print_occurrences(output):
 
     print(' '.join(map(str, output)))
 
+def get_hash(pattern) -> int:
+    global B, Q
+    length = len(pattern)
+    result = 0
+    for i in range(length):
+        result = (B*result+ord(pattern[i]))%Q
+    return result
+
 def get_occurrences(pattern, text):
-    PRIME = 10**9+7
-    BASE = 31
+    global B, Q
     p_len = len(pattern)
     t_len = len(text)
 
@@ -26,25 +33,25 @@ def get_occurrences(pattern, text):
     pattern_hash = 0
     text_hash = 0
     for i in range(p_len):
-        pattern_hash = (pattern_hash * BASE + ord(pattern[i])) % PRIME
-        text_hash = (text_hash * BASE + ord(text[i])) % PRIME
+        pattern_hash = (pattern_hash * Q + ord(pattern[i])) % B
+        text_hash = (text_hash * Q + ord(text[i])) % B
 
     # Calculate BASE^(p_len-1) for rolling hash computation
     power = 1
     for i in range(p_len-1):
-        power = (power * BASE) % PRIME
+        power = (power * Q) % B
 
     # Check each substring of length p_len of the text for a match with the pattern
     occurrences = []
     pattern_hash = get_hash(pattern)
-    text_hash = get_hash(text[:pattern_length])
+    text_hash = get_hash(text[:p_len])
 
-    for i in range(text_length - pattern_length + 1):
+    for i in range(t_len - p_len + 1):
         if text_hash == pattern_hash:
-            if text[i:i + pattern_length] == pattern:
+            if text[i:i + p_len] == pattern:
                 occurrences.append(i)
-        if i < text_length - pattern_length:
-            text_hash = (B*(text_hash-ord(text[i])*multiplier)+ord(text[i+pattern_length]))%Q
+        if i < t_len - p_len:
+            text_hash = (B*(text_hash-ord(text[i])*power)+ord(text[i+p_len]))%Q
     # and return an iterable variable
     return occurrences
 
