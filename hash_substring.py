@@ -1,5 +1,5 @@
 # Python 3
-B = 3
+B = 13
 Q = 256
 def read_input():
     choice = input().strip()
@@ -28,13 +28,6 @@ def get_occurrences(pattern, text):
     global B, Q
     p_len = len(pattern)
     t_len = len(text)
-
-    # Calculate the hash of the pattern and the first substring of the same length in the text
-    pattern_hash = 0
-    text_hash = 0
-    for i in range(p_len):
-        pattern_hash = (pattern_hash * Q + ord(pattern[i])) % B
-        text_hash = (text_hash * Q + ord(text[i])) % B
 
     # Calculate BASE^(p_len-1) for rolling hash computation
     power = 1
